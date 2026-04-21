@@ -774,7 +774,7 @@ body::after {
 /* Premium Tab Design */
 .tab-buttons {
     display: flex;
-    gap: 2px;
+    gap: 4px;
     margin-bottom: 32px;
     background: rgba(0, 0, 0, 0.5);
     padding: 4px;
@@ -786,7 +786,7 @@ body::after {
     flex: 1;
     padding: 16px 24px;
     background: transparent;
-    border: none;
+    border: 1px solid rgba(0, 180, 81, 0.15);
     color: rgba(255, 255, 255, 0.7);
     font-family: 'Oswald', sans-serif;
     font-size: 16px;
@@ -818,12 +818,14 @@ body::after {
         var(--hg-secondary-green) 100%
     );
     color: white;
+    border: 1px solid rgba(0, 180, 81, 0.6);
     box-shadow: 0 4px 20px rgba(0, 180, 81, 0.4);
 }
 
 .tab-btn:not(.active):hover {
     color: white;
     background: rgba(0, 180, 81, 0.1);
+    border-color: rgba(0, 180, 81, 0.35);
 }
 
 .tab-btn:not(.active):hover::before {
