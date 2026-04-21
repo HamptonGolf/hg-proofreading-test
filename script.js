@@ -1015,17 +1015,15 @@ async function processImageFile(file) {
     // Auto-compress if over the limit
     let processedFile = file;
     if (file.size > IMAGE_MAX_SIZE) {
-        showNotification('Image is large — optimizing for analysis...', 'info', 3000);
         try {
             processedFile = await compressImage(file, IMAGE_MAX_SIZE);
             const compressedMB = (processedFile.size / 1024 / 1024).toFixed(2);
-            showNotification(`Image optimized to ${compressedMB}MB`, 'success', 2000);
+            showNotification(`Image optimized to ${compressedMB}MB for analysis`, 'success', 2000);
         } catch (err) {
             showNotification('Could not optimize image. Please use a smaller file.', 'error');
             return;
         }
     }
-
     selectedImage = processedFile;
 
     const fileSizeInMB = (processedFile.size / 1024 / 1024).toFixed(2);
