@@ -1018,20 +1018,12 @@ async function processImageFile(file) {
         showNotification('Image is large — optimizing for analysis...', 'info', 3000);
         try {
             processedFile = await compressImage(file, IMAGE_MAX_SIZE);
+            const compressedMB = (processedFile.size / 1024 / 1024).toFixed(2);
+            showNotification(`Image optimized to ${compressedMB}MB`, 'success', 2000);
         } catch (err) {
-            showNotification('Could not optimize image. Please use a smaller file (under 3.5MB).', 'error');
+            showNotification('Could not optimize image. Please use a smaller file.', 'error');
             return;
         }
-
-        // Hard reject if compression still couldn't get it under the limit
-        if (processedFile.size > IMAGE_MAX_SIZE) {
-            const finalMB = (processedFile.size / 1024 / 1024).toFixed(2);
-            showNotification(`Image could not be reduced enough (${finalMB}MB). Please use a smaller file.`, 'error');
-            return;
-        }
-
-        const compressedMB = (processedFile.size / 1024 / 1024).toFixed(2);
-        showNotification(`Image optimized to ${compressedMB}MB`, 'success', 2000);
     }
 
     selectedImage = processedFile;
