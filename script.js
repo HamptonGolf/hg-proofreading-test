@@ -2783,7 +2783,11 @@ function clearResults() {
 
 // Reanalyze the last document/text with more thorough checking
 async function reanalyze() {
-    if (!lastAnalyzedText) {
+    // For image mode, lastAnalyzedText is intentionally empty — check lastImageBase64 instead
+    const hasImageToReanalyze = lastInputMode === 'image' && lastImageBase64;
+    const hasTextToReanalyze = lastInputMode !== 'image' && lastAnalyzedText;
+
+    if (!hasImageToReanalyze && !hasTextToReanalyze) {
         showNotification('No previous analysis found to reanalyze', 'error');
         return;
     }
@@ -2797,11 +2801,10 @@ async function reanalyze() {
         showNotification('Please enter and save your Claude API key first', 'error');
         return;
     }
-    
-    // Determine mode based on what was last analyzed
+
+    // Route based on what was last analyzed
     const imageToUse = lastInputMode === 'image' ? lastImageBase64 : null;
     const pdfToUse = lastInputMode === 'pdf' ? lastPdfBase64 : null;
-    const isTextTab = lastInputMode === 'text';
     
     // Set the reanalysis flag
     isReanalyzing = true;
@@ -2823,12 +2826,10 @@ ${additionalContext ? `Additional Context: ${additionalContext}` : ''}
     const errorList = document.getElementById('error-list');
     if (resultsSection && resultsSection.classList.contains('show')) {
 
-        // Blur any focused element inside results before hiding to prevent aria-hidden console errors
         const focusedElement = resultsSection.querySelector(':focus');
         if (focusedElement) {
             focusedElement.blur();
         }
-        // Move focus to a safe anchor outside the results section
         const proofreadBtn = document.getElementById('proofread-btn');
         if (proofreadBtn) {
             proofreadBtn.focus({ preventScroll: true });
@@ -2853,7 +2854,7 @@ ${additionalContext ? `Additional Context: ${additionalContext}` : ''}
     }
     
     isProcessing = true;
-    showLoading(true, isTextTab ? 'text' : 'document');
+    showLoading(true, lastInputMode); // 'text', 'pdf', or 'image'
     
     const loadingSection = document.getElementById('loading');
     if (loadingSection) {
