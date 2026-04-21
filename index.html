@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="description" content="Hampton Golf AI Proofreader - Professional document proofreading powered by Claude AI">
+    <meta name="author" content="Hampton Golf">
+    <meta name="theme-color" content="#006600">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
+    <title>Hampton Golf - AI Proofreader | Professional Document Analysis</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23006600'/%3E%3Ctext x='50' y='67' font-size='50' fill='white' text-anchor='middle' font-family='sans-serif' font-weight='bold'%3EHG%3C/text%3E%3C/svg%3E">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Preload fonts for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <!-- Animated Background Orbs -->
+    <div class="orb orb1" aria-hidden="true"></div>
+    <div class="orb orb2" aria-hidden="true"></div>
+    <div class="orb orb3" aria-hidden="true"></div>
+
+    <!-- Premium Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo" role="banner">
+                <div class="logo-icon" aria-label="Hampton Golf Logo">
+                    <img src="assets/logo/HG-door-element_cmyk.png" alt="Hampton Golf Logo" class="logo-image">
+                </div>
+                <div>
+                    <div class="logo-text">Hampton<span>Golf</span></div>
+                </div>
+            </div>
+            <div class="status-indicator" aria-live="polite">
+                <span class="status-dot"></span>
+                <span class="status-text">Status: Active</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="main-title">Document Proofreader</h1>
+            <p class="subtitle">Powered by Claude AI & Hampton Golf</p>
+        </section>
+
+        <!-- API Key Section -->
+        <section class="api-key-section glass-card" aria-label="API Configuration">
+            <div class="api-key-header">
+                <h2 class="section-title">API Configuration</h2>
+            </div>
+            <div class="api-key-container">
+                <label for="api-key" class="api-key-label">
+                    <span class="label-text">Claude API Key</span>
+                    <span class="label-required">*</span>
+                </label>
+                <input 
+                    type="password" 
+                    id="api-key" 
+                    class="api-key-input" 
+                    placeholder="sk-ant-api..." 
+                    autocomplete="off"
+                    aria-required="true"
+                    aria-describedby="api-key-note"
+                >
+            </div>
+            <div class="api-key-footer">
+                <p id="api-key-note" class="api-key-note">
+                    <span class="note-icon">ℹ️</span>
+                    Your API key is stored locally on your device and never transmitted
+                </p>
+                <button class="api-key-save" onclick="saveApiKey()" aria-label="Save API Key">
+                    <span class="button-text">Activate</span>
+                    <span class="button-icon">→</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Input Section -->
+        <section class="input-section glass-card" aria-label="Content Input">
+            <!-- Tab Navigation -->
+            <div class="tab-buttons" role="tablist">
+                <button 
+                    class="tab-btn active" 
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="text-tab"
+                    onclick="switchTab('text')"
+                >
+                    <span class="tab-icon">✍️</span>
+                    <span class="tab-text">Direct Input</span>
+                </button>
+                <button 
+                    class="tab-btn" 
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="file-tab"
+                    onclick="switchTab('file')"
+                >
+                    <span class="tab-icon">📄</span>
+                    <span class="tab-text">PDF Upload</span>
+                </button>
+                <button 
+                    class="tab-btn" 
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="image-tab"
+                    onclick="switchTab('image')"
+                >
+                    <span class="tab-icon">🖼️</span>
+                    <span class="tab-text">Image Upload</span>
+                </button>
+            </div>
+
+            <!-- Text Input Tab -->
+            <div id="text-tab" class="tab-content active" role="tabpanel">
+                <div class="input-header">
+                    <h3 class="input-title">Enter Your Content</h3>
+                    <span class="char-count" id="char-count">0 characters</span>
+                </div>
+                <textarea 
+                    id="text-input" 
+                    class="text-input" 
+                    placeholder="Paste or type your content here..."
+                    aria-label="Text content for proofreading"
+                    spellcheck="false"
+                ></textarea>
+                <div class="input-footer">
+                    <span class="input-tip">💡 Tip: For best results, include entire sections rather than isolated sentences for context-aware analysis</span>
+                </div>
+            </div>
+
+            <!-- File Upload Tab -->
+            <div id="file-tab" class="tab-content" role="tabpanel">
+                <div class="file-upload-wrapper">
+                    <div class="file-upload-area" id="upload-area" role="button" aria-label="Upload PDF file">
+                        <div class="upload-visual">
+                            <div class="upload-icon">📄</div>
+                            <div class="upload-icon-bg"></div>
+                        </div>
+                        <h3 class="upload-title">Drop your PDF here</h3>
+                        <p class="upload-subtitle">or click to browse your files</p>
+                        <div class="upload-specs">
+                            <span class="spec-item">PDF Format</span>
+                            <span class="spec-separator">•</span>
+                            <span class="spec-item">Max 4MB</span>
+                        </div>
+                        <input type="file" id="file-input" class="file-input" accept=".pdf" aria-hidden="true">
+                    </div>
+                    <div id="file-info" class="file-info">
+                        <div class="file-info-content">
+                        <div class="file-details">
+                            <strong>Selected file:</strong>
+                            <span id="file-name" class="file-name"></span>
+                        </div>
+                        <button class="file-remove" onclick="removeFile()" aria-label="Remove file">×</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Upload Tab -->
+            <div id="image-tab" class="tab-content" role="tabpanel">
+                <div class="file-upload-wrapper">
+                    <div class="file-upload-area image-upload-area" id="image-upload-area" role="button" aria-label="Upload image file">
+                        <div class="upload-visual">
+                            <div class="upload-icon">🖼️</div>
+                            <div class="upload-icon-bg"></div>
+                        </div>
+                        <h3 class="upload-title">Drop your image here</h3>
+                        <p class="upload-subtitle">or click to browse your files</p>
+                        <div class="upload-specs">
+                            <span class="spec-item">JPG / PNG</span>
+                            <span class="spec-separator">•</span>
+                            <span class="spec-item">Max 3.5MB</span>
+                            <span class="spec-separator">•</span>
+                            <span class="spec-item">Auto-optimized if needed</span>
+                        </div>
+                        <input type="file" id="image-input" class="file-input" accept=".jpg,.jpeg,.png" aria-hidden="true">
+                    </div>
+                    <div id="image-info" class="file-info">
+                        <div class="file-info-content">
+                            <div class="file-details">
+                                <strong>Selected file:</strong>
+                                <span id="image-name" class="file-name"></span>
+                            </div>
+                            <button class="file-remove" onclick="removeImage()" aria-label="Remove image">×</button>
+                        </div>
+                    </div>
+                    <div class="image-disclaimer">
+                        <span class="disclaimer-icon">⚠️</span>
+                        <span>Image proofreading uses visual recognition. For highest accuracy, use PDF or Direct Input — some errors in stylized fonts or small text may be missed.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Context Selection Section -->
+            <div class="context-selection">
+                <div class="context-header">
+                    <h3 class="context-title">Proofreading Context</h3>
+                    <span class="context-required">* Required</span>
+                </div>
+                
+                <div class="context-grid">
+                    <!-- Project Type Dropdown -->
+                    <div class="context-field">
+                        <label class="context-label">
+                            <span class="label-text">Project Type</span>
+                            <span class="label-required">*</span>
+                        </label>
+                        <input type="hidden" id="project-type" value="">
+                        <div class="custom-select" id="project-type-select">
+                            <div class="custom-select-trigger">
+                                <span class="custom-select-value">Select Type...</span>
+                                <svg class="custom-select-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00B451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+                            <div class="custom-select-dropdown">
+                                <div class="custom-select-option" data-value="">Select Type...</div>
+                                <div class="custom-select-option" data-value="flyer">Flyer</div>
+                                <div class="custom-select-option" data-value="menu">Menu</div>
+                                <div class="custom-select-option" data-value="collateral">Collateral Booklet</div>
+                                <div class="custom-select-option" data-value="calendar">Calendar</div>
+                                <div class="custom-select-option" data-value="newsletter">Newsletter</div>
+                                <div class="custom-select-option" data-value="other">Other</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Year Input -->
+                    <div class="context-field">
+                        <label for="year-input" class="context-label">
+                            <span class="label-text">Applicable Year(s)</span>
+                            <span class="label-required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="year-input" 
+                            class="context-input" 
+                            placeholder="e.g., 2026 or 2026-2027"
+                            pattern="^\d{4}(-\d{4})?$"
+                            title="Enter a year (2026) or year range (2026-2027)"
+                            value="2026"
+                            required
+                        >
+                        <span class="input-hint">Single year or range (YYYY-YYYY)</span>
+                    </div>
+                    
+                    <!-- Additional Context -->
+                    <div class="context-field context-field-full">
+                        <label for="additional-context" class="context-label">
+                            <span class="label-text">Additional Context</span>
+                            <span class="label-optional">(Optional)</span>
+                        </label>
+                        <textarea 
+                            id="additional-context" 
+                            class="context-textarea" 
+                            placeholder="Any other relevant information about this text/document (e.g., club-specific capitalization, intentional formatting choices, etc.)..."
+                            rows="3"
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proofread Button -->
+            <button id="proofread-btn" class="proofread-btn" aria-label="Start proofreading">
+                <span class="btn-content">
+                    <span class="btn-text">Analyze Text</span>
+                    <span class="btn-arrow">→</span>
+                </span>
+                <div class="btn-bg"></div>
+            </button>
+        </section>
+
+        <!-- Loading State -->
+        <section id="loading" class="loading glass-card" aria-live="polite" aria-hidden="true">
+            <div class="loading-content">
+                <div class="spinner">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                </div>
+                <p class="loading-text">Analyzing Your Document</p>
+                <div class="loading-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <p class="progress-text">Applying Hampton Golf standards...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results" class="results-section glass-card" aria-live="polite" aria-hidden="true">
+            <div class="results-header">
+                <div class="results-title-group">
+                    <h2 class="results-title">
+                        Proofreading Analysis Complete
+                    </h2>
+                    <p class="results-timestamp" id="results-timestamp"></p>
+                </div>
+                <div class="results-stats">
+                    <!-- NEW: Time Saved Badge -->
+                    <span class="time-saved-badge" id="time-saved-badge">
+                        <div class="time-content">
+                            <span class="time-value" id="time-saved-value">0</span>
+                            <span class="time-label">Minutes Saved</span>
+                        </div>
+                    </span>
+                    
+                    <span class="error-count" id="error-count">
+                        <span class="count-number">0</span>
+                        <span class="count-label">issues found</span>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="results-body">
+                <ul id="error-list" class="error-list">
+                    <!-- Errors will be populated here dynamically -->
+                </ul>
+            </div>
+
+            <!-- Export Options -->
+            <div class="results-footer">
+                <div class="export-options">
+                    <button class="export-btn copy-btn" onclick="copyResults()" aria-label="Copy to clipboard">
+                        <span class="export-icon">📋</span>
+                        <span>Copy Results</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Success State Template (Hidden by default) -->
+        <template id="success-template">
+            <div class="no-errors-message">
+                <div class="check-icon"></div>
+                <h3>Perfect Score!</h3>
+                <p>Your document meets all Hampton Golf standards.</p>
+            </div>
+        </template>
+    </main>
+
+    <!-- Error Detail Modal -->
+    <div id="error-modal" class="error-modal" aria-hidden="true">
+        <div class="error-modal-overlay"></div>
+        <div class="error-modal-content">
+            <div class="error-modal-header">
+                <h3 class="error-modal-title">Error Analysis</h3>
+                <button class="error-modal-close" onclick="closeErrorModal()" aria-label="Close modal">×</button>
+            </div>
+            <div class="error-modal-body">
+                <div class="error-modal-section">
+                    <div class="error-modal-label">Location</div>
+                    <div class="error-modal-value" id="modal-location"></div>
+                </div>
+                <div class="error-modal-section">
+                    <div class="error-modal-label">Issue Found</div>
+                    <div class="error-modal-value error-highlight" id="modal-error"></div>
+                </div>
+                <div class="error-modal-section">
+                    <div class="error-modal-label">Correction</div>
+                    <div class="error-modal-value correction-highlight" id="modal-correction"></div>
+                </div>
+                <div class="error-modal-section">
+                    <div class="error-modal-label">Explanation</div>
+                    <div class="error-modal-explanation" id="modal-explanation"></div>
+                </div>
+            </div>
+            <div class="error-modal-footer">
+                <button class="modal-action-btn copy-correction-btn" onclick="copyCorrection()" aria-label="Copy correction">
+                    <span class="export-icon">📋</span>
+                    <span>Copy Correction</span>
+                </button>
+                <button class="modal-action-btn close-modal-btn" onclick="closeErrorModal()" aria-label="Close">
+                    <span>Close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">© <span id="current-year"></span> Hampton Golf</p>
+            <div class="footer-links">
+                <a href="https://hampton.golf/" class="footer-link" target="_blank">About Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Load PDF.js for PDF processing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    // Wait for PDF.js to load before setting worker
+    if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        console.log('✅ PDF.js loaded successfully');
+    } else {
+        console.error('❌ PDF.js failed to load');
+        // Fallback: Try loading again
+        var script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        script.onload = function() {
+            if (typeof pdfjsLib !== 'undefined') {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                console.log('✅ PDF.js loaded on retry');
+            }
+        };
+        document.head.appendChild(script);
+    }
+</script>
+
+<script src="script.js"></script>
+</body>
+</html>
