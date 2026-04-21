@@ -955,6 +955,13 @@ function handleImageDrop(e) {
 
 async function processImageFile(file) {
     if (!file) return;
+
+    // Reset all image state immediately — prevents stale data from a previous
+    // file or session being used if this selection fails or is replaced
+    selectedImage = null;
+    imageBase64 = null;
+    lastImageBase64 = null;
+    lastInputMode = 'text'; // will be set to 'image' only after successful analysis
     
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     if (!validTypes.includes(file.type)) {
@@ -1040,6 +1047,8 @@ async function processImageFile(file) {
 function removeImage() {
     selectedImage = null;
     imageBase64 = null;
+    lastImageBase64 = null;
+    lastInputMode = 'text';
     document.getElementById('image-info').classList.remove('show');
     document.getElementById('image-input').value = '';
     showNotification('Image removed', 'info');
@@ -1793,8 +1802,14 @@ ${additionalContext ? `Additional Context: ${additionalContext}` : ''}
         showLoading(false);
         isProcessing = false;
         isReanalyzing = false;
+        // Null out the working copies but preserve the 'last' copies for reanalysis
         pdfBase64 = null;
         imageBase64 = null;
+        // Ensure lastInputMode is committed at completion so reanalyze knows what to use
+        // (it was set during setup but this confirms it survived the async flow)
+        if (lastImageBase64) lastInputMode = 'image';
+        else if (lastPdfBase64) lastInputMode = 'pdf';
+        else lastInputMode = 'text';
     }, 500);
 }
 
@@ -2878,9 +2893,14 @@ function showLoading(show, type = 'document') {
     if (!loading) return;
     
     if (show) {
-        // Update text based on type
         if (loadingText) {
-            loadingText.textContent = type === 'text' ? 'Analyzing Your Text' : 'Analyzing Your Document';
+            if (type === 'text') {
+                loadingText.textContent = 'Analyzing Your Text';
+            } else if (type === 'image') {
+                loadingText.textContent = 'Analyzing Your Image';
+            } else {
+                loadingText.textContent = 'Analyzing Your Document';
+            }
         }
         
         loading.classList.add('show');
@@ -2889,7 +2909,6 @@ function showLoading(show, type = 'document') {
             proofreadBtn.disabled = true;
             proofreadBtn.classList.add('loading');
         }
-        // Reset progress
         updateLoadingProgress(0, 'Initializing...');
     } else {
         loading.classList.remove('show');
